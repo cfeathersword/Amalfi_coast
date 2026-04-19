@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amalfi Coast — 7-Day Catamaran Charter</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<style>
+  :root {
+    --navy: #0d1f2d;
+    --deep: #091623;
+    --sea: #1a4a6b;
+    --azure: #2980b9;
+    --aqua: #5dade2;
+    --foam: #aed6f1;
+    --sand: #f5e6c8;
+    --gold: #c9a84c;
+    --light: #e8f4fd;
+    --white: #fdfeff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--deep);
+    color: var(--white);
+    font-family: 'Josefin Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    height: 100vh;
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 30% 60%, rgba(26,74,107,0.6) 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 30%, rgba(41,128,185,0.3) 0%, transparent 50%),
+      linear-gradient(180deg, #050e18 0%, #0d1f2d 40%, #0a2840 100%);
+    z-index: 0;
+  }
+
+  /* animated waves */
+  .waves-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 180px;
+    z-index: 1;
+  }
+  .wave {
+    position: absolute;
+    bottom: 0;
+    left: -100%;
+    width: 300%;
+    height: 100%;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 100'%3E%3Cpath fill='%230d1f2d' d='M0,60 C360,100 1080,0 1440,60 L1440,100 L0,100 Z'/%3E%3C/svg%3E") repeat-x;
+    background-size: 50% 100%;
+    animation: waveAnim 12s linear infinite;
+    opacity: 0.6;
+  }
+  .wave:nth-child(2) {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 100'%3E%3Cpath fill='%231a4a6b' d='M0,40 C400,90 1000,10 1440,50 L1440,100 L0,100 Z'/%3E%3C/svg%3E");
+    animation-duration: 18s;
+    animation-direction: reverse;
+    opacity: 0.4;
+    height: 120px;
+  }
+  .wave:nth-child(3) {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 100'%3E%3Cpath fill='%230d1f2d' d='M0,70 C300,20 1100,90 1440,40 L1440,100 L0,100 Z'/%3E%3C/svg%3E");
+    animation-duration: 22s;
+    opacity: 0.8;
+    height: 80px;
+  }
+  @keyframes waveAnim {
+    from { transform: translateX(0); }
+    to { transform: translateX(50%); }
+  }
+
+  /* stars */
+  .stars {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: white;
+    animation: twinkle var(--d) ease-in-out infinite;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.2; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.4); }
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 2rem;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Josefin Sans', sans-serif;
+    font-weight: 200;
+    font-size: 0.7rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--aqua);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 1s 0.3s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(3rem, 8vw, 7rem);
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    color: var(--white);
+    opacity: 0;
+    animation: fadeUp 1s 0.5s forwards;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--foam);
+  }
+
+  .hero-subtitle {
+    margin-top: 1.5rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0;
+    animation: fadeUp 1s 0.7s forwards;
+  }
+
+  .hero-meta {
+    margin-top: 2.5rem;
+    display: flex;
+    gap: 3rem;
+    justify-content: center;
+    opacity: 0;
+    animation: fadeUp 1s 0.9s forwards;
+  }
+
+  .hero-meta-item {
+    text-align: center;
+  }
+
+  .hero-meta-item .label {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--aqua);
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+
+  .hero-meta-item .value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: var(--sand);
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 200px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: fadeIn 1s 1.5s forwards;
+    color: var(--foam);
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+
+  .scroll-hint .line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--aqua), transparent);
+    animation: scrollLine 2s ease-in-out infinite;
+  }
+
+  @keyframes scrollLine {
+    0% { transform: scaleY(0); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    51% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    background: var(--navy);
+    position: relative;
+  }
+
+  .section-header {
+    text-align: center;
+    padding: 5rem 2rem 3rem;
+  }
+
+  .section-header .eyebrow {
+    font-size: 0.75rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--aqua);
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .section-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    color: var(--sand);
+  }
+
+  /* ── ROUTE VISUAL ── */
+  .route-strip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0;
+    padding: 1rem 2rem 3rem;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .route-stop {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  .route-dot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .route-dot:hover { transform: translateY(-3px); }
+
+  .route-dot .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--aqua);
+    border: 2px solid var(--foam);
+    transition: transform 0.2s, background 0.2s;
+  }
+
+  .route-dot.home .dot { background: var(--gold); border-color: var(--sand); }
+  .route-dot:hover .dot { transform: scale(1.5); }
+
+  .route-dot .name {
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--foam);
+    white-space: nowrap;
+  }
+
+  .route-line {
+    width: 30px;
+    height: 1px;
+    background: linear-gradient(to right, var(--azure), var(--sea));
+    position: relative;
+    top: -8px;
+    flex-shrink: 0;
+  }
+
+  .route-line::after {
+    content: '⟶';
+    position: absolute;
+    top: -7px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.55rem;
+    color: var(--azure);
+    opacity: 0.6;
+  }
+
+  /* ── DAYS ── */
+  .days-container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 2rem 6rem;
+  }
+
+  .day-card {
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(93,173,226,0.15);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .day-card:hover { border-color: rgba(93,173,226,0.4); }
+
+  .day-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.4rem 2rem;
+    background: rgba(13,31,45,0.6);
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+  }
+
+  .day-header:hover { background: rgba(26,74,107,0.4); }
+
+  .day-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: var(--aqua);
+    line-height: 1;
+    min-width: 2.5rem;
+    text-align: center;
+  }
+
+  .day-header-text { flex: 1; }
+
+  .day-route-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .day-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.55rem;
+    font-weight: 400;
+    color: var(--sand);
+  }
+
+  .day-chevron {
+    color: var(--aqua);
+    font-size: 1rem;
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+
+  .day-card.open .day-chevron { transform: rotate(180deg); }
+
+  .day-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .day-card.open .day-body { max-height: 1000px; }
+
+  .day-inner {
+    padding: 0 2rem 2rem;
+    background: rgba(9,22,35,0.5);
+  }
+
+  .stop {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid rgba(93,173,226,0.08);
+  }
+
+  .stop:last-child { border-bottom: none; }
+
+  .stop-time-col {
+    min-width: 70px;
+    text-align: right;
+  }
+
+  .stop-time {
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    color: var(--aqua);
+    white-space: nowrap;
+  }
+
+  .stop-duration {
+    font-size: 0.72rem;
+    color: rgba(174,214,241,0.5);
+    margin-top: 0.2rem;
+  }
+
+  .stop-divider {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 20px;
+  }
+
+  .stop-circle {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--aqua);
+    border: 1px solid var(--foam);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .stop-vline {
+    width: 1px;
+    flex: 1;
+    background: rgba(93,173,226,0.2);
+    margin-top: 4px;
+  }
+
+  .stop-content { flex: 1; }
+
+  .stop-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: var(--foam);
+    margin-bottom: 0.5rem;
+  }
+
+  .stop-note {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: rgba(232,244,253,0.65);
+    font-weight: 300;
+  }
+
+  /* ── TIPS SECTION ── */
+  .tips-section {
+    background: linear-gradient(180deg, var(--navy) 0%, var(--deep) 100%);
+    padding: 4rem 2rem 6rem;
+  }
+
+  .tips-grid {
+    max-width: 860px;
+    margin: 2rem auto 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .tip-card {
+    background: rgba(26,74,107,0.15);
+    border: 1px solid rgba(93,173,226,0.15);
+    border-radius: 4px;
+    padding: 1.5rem;
+    transition: border-color 0.3s, background 0.3s;
+  }
+
+  .tip-card:hover {
+    border-color: rgba(93,173,226,0.4);
+    background: rgba(26,74,107,0.3);
+  }
+
+  .tip-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.8rem;
+    display: block;
+  }
+
+  .tip-title {
+    font-size: 0.72rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  .tip-text {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: rgba(232,244,253,0.65);
+    font-weight: 300;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(174,214,241,0.3);
+    border-top: 1px solid rgba(93,173,226,0.08);
+  }
+
+  .stop-note em {
+    color: var(--aqua);
+    font-style: normal;
+    font-size: 0.85rem;
+  }
+
+  .stop-note strong {
+    color: var(--gold);
+    font-weight: 400;
+  }
+
+  /* ── MAP ── */
+  .map-section {
+    padding: 0 2rem 4rem;
+  }
+
+  #charter-map {
+    max-width: 860px;
+    margin: 0 auto;
+    height: 500px;
+    border-radius: 4px;
+    border: 1px solid rgba(93,173,226,0.2);
+    overflow: hidden;
+  }
+
+  /* Leaflet popup override */
+  .leaflet-popup-content-wrapper {
+    background: #0d1f2d !important;
+    border: 1px solid rgba(93,173,226,0.4) !important;
+    border-radius: 4px !important;
+    color: #fdfeff !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+  }
+  .leaflet-popup-tip {
+    background: #0d1f2d !important;
+  }
+  .leaflet-popup-content {
+    margin: 10px 14px !important;
+    font-family: 'Josefin Sans', sans-serif !important;
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+  }
+  .leaflet-popup-content b {
+    color: #aed6f1;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+  }
+  .leaflet-popup-content span {
+    color: rgba(232,244,253,0.6);
+    font-size: 11px;
+    display: block;
+    margin-top: 2px;
+  }
+  .leaflet-container {
+    background: #0a1e2e !important;
+    font-family: 'Josefin Sans', sans-serif !important;
+  }
+
+
+  @media print {
+    .hero { height: auto; min-height: auto; padding: 3rem 2rem; }
+    .waves-container, .stars, .scroll-hint { display: none; }
+    .day-body { max-height: none !important; }
+    .day-chevron { display: none; }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .day-header { padding: 1.2rem 1.2rem; gap: 1rem; }
+    .day-inner { padding: 0 1.2rem 1.5rem; }
+    .stop { gap: 1rem; }
+    .stop-time-col { min-width: 55px; }
+    .hero-meta { gap: 1.5rem; flex-wrap: wrap; }
+    .route-line { width: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="stars" id="stars"></div>
+  <div class="waves-container">
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+  </div>
+  <div class="hero-content">
+    <span class="hero-eyebrow">Sailuxe · Lagoon 60 · 5 Cabins</span>
+    <h1 class="hero-title">Amalfi<br><em>Coast</em></h1>
+    <p class="hero-subtitle">20 – 27 June</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span class="label">Board</span>
+        <span class="value">Sat 20 June, 18:00</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="label">Vessel</span>
+        <span class="value">Lagoon 60</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="label">Disembark</span>
+        <span class="value">Sat 27 June, 10:00</span>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="line"></div>
+  </div>
+</section>
+
+<!-- MAIN -->
+<main class="main">
+
+  <div class="section-header">
+    <span class="eyebrow">The Route</span>
+    <h2>Saturday to Saturday</h2>
+  </div>
+
+  <div class="route-strip">
+    <div class="route-stop">
+      <div class="route-dot home"><div class="dot"></div><span class="name">Salerno</span></div>
+    </div>
+    <div class="route-line"></div>
+    <div class="route-stop">
+      <div class="route-dot"><div class="dot"></div><span class="name">Cetara</span></div>
+    </div>
+    <div class="route-line"></div>
+    <div class="route-stop">
+      <div class="route-dot"><div class="dot"></div><span class="name">Amalfi</span></div>
+    </div>
+    <div class="route-line"></div>
+    <div class="route-stop">
+      <div class="route-dot"><div class="dot"></div><span class="name">Positano</span></div>
+    </div>
+    <div class="route-line"></div>
+    <div class="route-stop">
+      <div class="route-dot"><div class="dot"></div><span class="name">Nerano</span></div>
+    </div>
+    <div class="route-line"></div>
+    <div class="route-stop">
+      <div class="route-dot"><div class="dot"></div><span class="name">Capri</span></div>
+    </div>
+    <div class="route-line"></div>
+    <div class="route-stop">
+      <div class="route-dot"><div class="dot"></div><span class="name">Procida</span></div>
+    </div>
+    <div class="route-line"></div>
+    <div class="route-stop">
+      <div class="route-dot"><div class="dot"></div><span class="name">Ischia</span></div>
+    </div>
+    <div class="route-line"></div>
+    <div class="route-stop">
+      <div class="route-dot"><div class="dot"></div><span class="name">Li Galli</span></div>
+    </div>
+    <div class="route-line"></div>
+    <div class="route-stop">
+      <div class="route-dot"><div class="dot"></div><span class="name">Positano</span></div>
+    </div>
+    <div class="route-line"></div>
+    <div class="route-stop">
+      <div class="route-dot home"><div class="dot"></div><span class="name">Salerno</span></div>
+    </div>
+  </div>
+
+  <div class="section-header" style="padding-top: 1rem;">
+    <span class="eyebrow">The Route</span>
+    <h2>Chart</h2>
+  </div>
+
+  <div class="map-section">
+    <div id="charter-map"></div>
+  </div>
+
+  <div class="section-header" style="padding-top: 1rem;">
+    <span class="eyebrow">Day by Day</span>
+    <h2>The Itinerary</h2>
+  </div>
+
+  <div class="days-container">
+
+    <!-- Day 1 — Saturday -->
+    <div class="day-card open">
+      <div class="day-header" onclick="toggleDay(this)">
+        <div class="day-number">1</div>
+        <div class="day-header-text">
+          <span class="day-route-label">Saturday 20 June — Boarding</span>
+          <div class="day-title">Board & Settle In, Salerno</div>
+        </div>
+        <span class="day-chevron">▾</span>
+      </div>
+      <div class="day-body">
+        <div class="day-inner">
+          <div class="stop">
+            <div class="stop-time-col"><span class="stop-time">18:00</span><span class="stop-duration">Boarding</span></div>
+            <div class="stop-divider"><div class="stop-circle"></div><div class="stop-vline"></div></div>
+            <div class="stop-content">
+              <div class="stop-name">Marina d'Arechi, Salerno — Board</div>
+              <div class="stop-note">Board from 6pm. Meet the skipper and crew, complete the safety briefing, and stow your gear. The boat will be fully ready for departure.</div>
+            </div>
+          </div>
+          <div class="stop">
+            <div class="stop-time-col"><span class="stop-time">19:30</span><span class="stop-duration">Overnight</span></div>
+            <div class="stop-divider"><div class="stop-circle"></div></div>
+            <div class="stop-content">
+              <div class="stop-name">🧀 Snacks & Charcuterie on Board — Marina</div>
+              <div class="stop-note">A relaxed first evening in the cockpit with drinks, charcuterie and snacks as the marina comes to life around you. Early night — big week ahead. Overnight at Marina d'Arechi.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 2 — Sunday -->
+    <div class="day-card">
+      <div class="day-header" onclick="toggleDay(this)">
+        <div class="day-number">2</div>
+        <div class="day-header-text">
+          <span class="day-route-label">Sunday 21 June — Cast Off</span>
+          <div class="day-title">Salerno → Cetara → Amalfi</div>
+        </div>
+        <span class="day-chevron">▾</span>
+      </div>
+      <div class="day-body">
+        <div class="day-inner">
+          <div class="stop">
+            <div class="stop-time-col"><span class="stop-time">08:30</span><span class="stop-duration">Depart</span></div>
+            <div class="stop-divider"><div class="stop-circle"></div><div class="stop-vline"></div></div>
+            <div class="stop-content">
+              <div class="stop-name">Marina d'Arechi, Salerno — Depart</div>
+              <div class="stop-note">Cast off early and head west. Morning light on the Amalfi cliffs is something else entirely.</div>
+            </div>
+          </div>
+          <div class="stop">
+            <div class="stop-time-col"><span class="stop-time">10:30</span><span class="stop-duration">~2.5 hrs</span></div>
+            <div class="stop-divider"><div class="stop-circle"></div><div class="stop-vline"></div></div>
+            <div class="stop-content">
+              <div class="stop-name">Cetara — The Anchovy Village</div>
+              <div class="stop-note">Italy's anchovy capital and one of the most authentic stops on the coast. Anchor in the bay and snorkel the clear shallows around the tower — good visibility over rock and posidonia grass. 🤿 <em>Suggested ashore:</em> dinghy in for a stroll through the village and pick up bottles of colatura di alici to take home.</div>
+            </div>
+          </div>
+          <div class="stop">
+            <div class="stop-time-col"><span class="stop-time">16:00</span><span class="stop-duration">Overnight</span></div>
+            <div class="stop-divider"><div class="stop-circle"></div></div>
+            <div class="stop-content">
+              <div class="stop-name">🌙 Dinner on Board — Amalfi Marina</div>
+              <div class="stop-note">Stern-to at Marina Coppola, Amalfi. <em>Optional:</em> evening stroll up to the Cathedral of Sant'Andrea and aperitivo on the waterfront as the cliffs turn gold. Dinner served on board. Overnight in the marina.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 3 — Monday -->
+    <div class="day-card">
+      <div class="day-header" onclick="toggleDay(this)">
+        <div class="day-number">3</div>
+        <div class="day-header-text">
+          <span class="day-route-label">Monday 22 June</span>
+          <div class="day-title">Amalfi → Furore → Positano → Marina del Cantone</div>
+        </div>
+        <span class="day-chevron">▾</span>
+      </div>
+      <div class="day-body">
+        <div class="day-inner">
+          <div class="stop">
+            <div class="stop-time-col"><span class="stop-time">09:30</span><span class="stop-duration">~45 min</span></div>
+            <div class="stop-divider"><div class="stop-circle"></div><div class="stop-vline"></div></div>
+            <div class="stop-content">
+              <div class="stop-name">Fiordo di Furore — Swim Stop</div>
+              <div class="stop-note">One of the most dramatic spots on the entire coast — a narrow fjord sliced vertically into the cliffs, invisible until you're almost upon it. Anchor just off the entrance and swim in through the gorge to the tiny pebble beach inside. 🤿 The rocky walls and clear water make for good snorkelling too. Go early — it gets crowded by late morning.</div>
+            </div>
+          </div>
+          <div class="stop">
+            <div class="stop-time-col"><span class="stop-time">11:00</span><span class="stop-duration">Afternoon</span></div>
+            <div class="stop-divider"><div class="stop-circle"></div><div class="stop-vline"></div></div>
+            <div class="stop-content">
+              <div class="stop-name">Positano — Anchor</div>
+              <div class="stop-note">Anchor off the beach. Swim off the boat and relax through the afternoon. <em>Suggested ashore:</em> dinghy in and explore Via dei Mulini's boutiques and the narrow lanes.<br><br>
+              <strong>⚑ Optional: Path of the Gods — Sentiero degli Dei</strong><br>
+              One of the great walks of southern Italy, tracing a ridge 500m above the sea with unbroken views along the entire Amalfi Coast. <strong>Difficulty: Easy to Moderate</strong> — the classic direction (Bomerano → Nocelle) runs almost entirely downhill on well-maintained stone paths. No scrambling or technical sections. Total distance 7.5km, 2.5–3 hrs walking. Cumulative descent ≈650m.<br><br>
+              <em>Directions from the boat:</em> Dinghy ashore by 08:00. Taxi from Positano waterfront to Bomerano / Agerola (≈30 min, ≈€35–45 — arrange the night before if possible). Walk east to west along the waymarked trail, with the sea always in front of you. The path passes through ancient terraces and abandoned farmhouses before arriving at the hamlet of Nocelle. From Nocelle, descend the 1,800 stone steps into Positano (≈45 min, steep but clearly signed) and dinghy back to the boat for a well-earned swim. Aim to start walking no later than 09:00 — late June heat on the open ridge can be intense after midday.<br><br>
+              <em>What to bring:</em> Trail shoes or sturdy trainers · 2L water per person · sun hat & sunscreen · light snack · cash for the taxi.</div>
+            </div>
+          </div>
+          <div class="stop">
+            <div class="stop-time-col"><span class="stop-time">16:30</span><span class="stop-duration">Overnight</span></div>
+            <div class="stop-divider"><div class="stop-circle"></div></div>
+            <div class="stop-content">
+              <div class="stop-name">🍽️ Dinner Ashore — Marina del Cantone, Nerano</div>
+              <div class="stop-note">Anchor in this sheltered turquoise bay inside the Punta Campanella Marine Reserve. <strong>Dinner ashore tonight</strong> — this is the birthplace of spaghetti alla Nerano (zucchini, aged provola, basil) and it must be eaten here. Try Lo Scoglio or Maria Grazia. Overnight on anchor — one of the finest anchorages on the coast.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 4 — Tuesday -->
+    <div class="day-card">
+      <div class="day-header" onclick="toggleDay(this)">
+        <div class="day-number">4</div>
+        <div class="day-header-text">
+          <span class="day-route-label">Tuesday 23 June</span>
+          <div class="day-title">Capri — Blue Grotto & Faraglioni</div>
+        </div>
+        <span class="day-chevron">▾</span>
+      </div>
+      <div class="day-body">
+        <div class="day-inner">
+          <div class="stop">
+            <div class="stop-time-col"><span class="stop-time">08:30</span><span class="stop-duration">~90 min</span></div>
+            <div class="stop-divider"><div class="stop-circle"></div><div class="stop-vline"></div></div>
+            <div class="stop-content">
+              <div class="stop-name">Blue Grotto</div>
+              <div class="stop-note">Arrive before 9am — queues build fast in late June and the grotto closes if westerly swell exceeds ~50cm. Transfer to the mandatory small rowboats from your catamaran. Worth every minute inside.</div>
+            </div>
+          </div>
+          <div class="stop">
+            <div class="stop-time-col"><span class="stop-time">11:00</span><span class="stop-duration">Afternoon</span></div>
+            <div class="stop-divider"><div class="stop-circle"></div><div class="stop-vline"></div></div>
+            <div class="stop-content">
+              <div class="stop-name">Marina Grande, Capri — Faraglioni Snorkel</div>
+              <div class="stop-note">Anchor off Marina Grande. Motor the dinghy around to the Faraglioni rock stacks and snorkel the base of the arches — excellent marine life shelters in the rock. 🤿 Crystal clear. <em>Suggested ashore:</em> funicular up to Capri town and the Piazzetta, Gardens of Augustus for the views.</div>
+            </div>
+          </div>
+          <div class="stop">
+            <div class="stop-time-col"><span class="stop-time">20:00</span><span class="stop-duration">Overnight</span></div>
+            <div class="stop-divider"><div class="stop-circle"></div></div>
+            <div class="stop-content">
+              <div class="stop-name">🌙 Dinner on Board — Marina Grande, Capri</div>
+              <div class="stop-note">Dinner served on board with the lights of Capri town above you. Overnight on anchor off Marina Grande.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 5 — Wednesday -->
+    <div class="day-card">
+      <div class="day-header" onclick="toggleDay(this)">
+        <div class="day-number">5</div>
+        <div class="day-header-text">
+          <span class="day-route-label">Wednesday 24 June</span>
+          <div class="day-title">Capri → Procida → Ischia</div>
+        </div>
+        <span class="day-chevron">▾</span>
+      </div>
+      <div class="day-body">
+        <div class="day-inner">
+          <div class="stop">
+            <div class="stop-time-col"><span class="stop-time">09:00</span><span class="stop-duration">Morning</span></div>
+            <div class="stop-divider"><div class="stop-circle"></div><div class="stop-vline"></div></div>
+            <div class="stop-content">
+              <div class="stop-name">Morning Swim & Snorkel off Capri</div>
+              <div class="stop-note">🤿 One last snorkel in Capri's famous waters — the seabed around the anchor is excellent — before heading north across the Gulf.</div>
+            </div>
+          </div>
+          <div class="stop">
+            <div class="stop-time-col"><span class="stop-time">12:00</span><span class="stop-duration">~3 hrs</span></div>
+            <div class="stop-divider"><div class="stop-circle"></div><div class="stop-vline"></div></div>
+            <div class="stop-content">
+              <div class="stop-name">🍽️ Dinner Ashore — Procida</div>
+              <div class="stop-note">The most authentic and unhurried island in the Gulf of Naples. Berth in the marina. <strong>Dinner ashore tonight</strong> — walk to the pastel-stacked Marina Corricella and eat fresh-caught seafood at one of the quayside trattorias. Gorgonia or La Lampara are perennial favourites. Overnight in Procida marina.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 6 — Thursday -->
+    <div class="day-card">
+      <div class="day-header" onclick="toggleDay(this)">
+        <div class="day-number">6</div>
+        <div class="day-header-text">
+          <span class="day-route-label">Thursday 25 June</span>
+          <div class="day-title">Procida → Ischia → Li Galli → Positano</div>
+        </div>
+        <span class="day-chevron">▾</span>
+      </div>
+      <div class="day-body">
+        <div class="day-inner">
+          <div class="stop">
+            <div class="stop-time-col"><span class="stop-time">09:00</span><span class="stop-duration">~1 hr</span></div>
+            <div class="stop-divider"><div class="stop-circle"></div><div class="stop-vline"></div></div>
+            <div class="stop-content">
+              <div class="stop-name">Ischia — Baia di San Montano</div>
+              <div class="stop-note">Short hop to Ischia for a mid-morning swim stop in the stunning turquoise shallows of Baia di San Montano. 🤿 Good snorkelling over the sandy bottom and volcanic rock outcrops. <em>Optional:</em> visit the Poseidon or Negombo thermal gardens, or the medieval Aragonese Castle.</div>
+            </div>
+          </div>
+          <div class="stop">
+            <div class="stop-time-col"><span class="stop-time">12:30</span><span class="stop-duration">~1 hr</span></div>
+            <div class="stop-divider"><div class="stop-circle"></div><div class="stop-vline"></div></div>
+            <div class="stop-content">
+              <div class="stop-name">Li Galli — The Sirens' Islands</div>
+              <div class="stop-note">A small private archipelago known in antiquity as home to Homer's Sirens, once owned by Rudolf Nureyev. Anchor off for a swim and snorkel in extraordinary clear water. 🤿 Rocky seabed with excellent visibility — often possible to see the bottom in 15m+.</div>
+            </div>
+          </div>
+          <div class="stop">
+            <div class="stop-time-col"><span class="stop-time">15:30</span><span class="stop-duration">Overnight</span></div>
+            <div class="stop-divider"><div class="stop-circle"></div></div>
+            <div class="stop-content">
+              <div class="stop-name">🍽️ Dinner Ashore — Positano</div>
+              <div class="stop-note">Anchor off Positano beach for the final night. <strong>Dinner ashore tonight</strong> — dinghy in and splurge on a terrace table with a full bay view. Next2 or Il Ritrovo are superb. A perfect last evening on the water. Overnight on anchor.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 7 — Friday -->
+    <div class="day-card">
+      <div class="day-header" onclick="toggleDay(this)">
+        <div class="day-number">7</div>
+        <div class="day-header-text">
+          <span class="day-route-label">Friday 26 June — Homeward</span>
+          <div class="day-title">Positano → Cetara → Salerno</div>
+        </div>
+        <span class="day-chevron">▾</span>
+      </div>
+      <div class="day-body">
+        <div class="day-inner">
+          <div class="stop">
+            <div class="stop-time-col"><span class="stop-time">10:00</span><span class="stop-duration">~1 hr</span></div>
+            <div class="stop-divider"><div class="stop-circle"></div><div class="stop-vline"></div></div>
+            <div class="stop-content">
+              <div class="stop-name">Cetara — Final Swim & Snorkel</div>
+              <div class="stop-note">Last anchor of the trip in Cetara bay. A final morning swim and snorkel over the rocky bottom. 🤿 <em>Optional:</em> dinghy ashore and pick up a last bottle of colatura di alici to take home.</div>
+            </div>
+          </div>
+          <div class="stop">
+            <div class="stop-time-col"><span class="stop-time">13:00</span><span class="stop-duration">Arrive</span></div>
+            <div class="stop-divider"><div class="stop-circle"></div><div class="stop-vline"></div></div>
+            <div class="stop-content">
+              <div class="stop-name">Marina d'Arechi, Salerno — Return</div>
+              <div class="stop-note">Back at base by early afternoon. Bags packed and ready for the morning.</div>
+            </div>
+          </div>
+          <div class="stop">
+            <div class="stop-time-col"><span class="stop-time">20:00</span><span class="stop-duration">Overnight</span></div>
+            <div class="stop-divider"><div class="stop-circle"></div></div>
+            <div class="stop-content">
+              <div class="stop-name">🌙 Dinner on Board — Final Night, Salerno</div>
+              <div class="stop-note">Dinner served on board at the marina. Seven nights, two coastlines, three islands, one extraordinary sea. Overnight aboard.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 8 — Saturday -->
+    <div class="day-card">
+      <div class="day-header" onclick="toggleDay(this)">
+        <div class="day-number">8</div>
+        <div class="day-header-text">
+          <span class="day-route-label">Saturday 27 June — Disembark</span>
+          <div class="day-title">Farewell, Salerno</div>
+        </div>
+        <span class="day-chevron">▾</span>
+      </div>
+      <div class="day-body">
+        <div class="day-inner">
+          <div class="stop">
+            <div class="stop-time-col"><span class="stop-time">08:00</span><span class="stop-duration">Morning</span></div>
+            <div class="stop-divider"><div class="stop-circle"></div><div class="stop-vline"></div></div>
+            <div class="stop-content">
+              <div class="stop-name">Final Breakfast in the Cockpit</div>
+              <div class="stop-note">A last coffee and breakfast on board with the marina quiet around you. Collect your bags.</div>
+            </div>
+          </div>
+          <div class="stop">
+            <div class="stop-time-col"><span class="stop-time">10:00</span><span class="stop-duration">Disembark</span></div>
+            <div class="stop-divider"><div class="stop-circle"></div></div>
+            <div class="stop-content">
+              <div class="stop-name">Marina d'Arechi, Salerno — Check Out</div>
+              <div class="stop-note">Disembark by 10am. Final handover with the skipper. Until next time.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /days-container -->
+</main>
+
+<!-- TIPS -->
+<section class="tips-section">
+  <div class="section-header" style="padding-top:0;">
+    <span class="eyebrow">Captain's Notes</span>
+    <h2>Late June Tips</h2>
+  </div>
+  <div class="tips-grid">
+    <div class="tip-card">
+      <span class="tip-icon">🌊</span>
+      <div class="tip-title">Blue Grotto</div>
+      <div class="tip-text">Arrive before 9am. The grotto closes entirely when westerly swell exceeds ~50cm — have a backup plan. Queues can be 2hrs+ by mid-morning in peak season.</div>
+    </div>
+    <div class="tip-card">
+      <span class="tip-icon">⚓</span>
+      <div class="tip-title">Anchorages</div>
+      <div class="tip-text">Late June is high season. Arrive at popular bays (Positano, Marina del Cantone) before noon to secure a good spot — they fill up fast.</div>
+    </div>
+    <div class="tip-card">
+      <span class="tip-icon">🌬️</span>
+      <div class="tip-title">Wind Pattern</div>
+      <div class="tip-text">Expect light mornings with afternoon Maestrale (NW wind) building to 10–15kts. Plan longer passages for the morning. The return leg east can be a lovely reach.</div>
+    </div>
+    <div class="tip-card">
+      <span class="tip-icon">🛒</span>
+      <div class="tip-title">Provisioning</div>
+      <div class="tip-text">Stock up thoroughly in Salerno before departure. Prices on Capri and Ischia in particular are significantly higher than the mainland.</div>
+    </div>
+    <div class="tip-card">
+      <span class="tip-icon">🐟</span>
+      <div class="tip-title">Must Eat</div>
+      <div class="tip-text">Colatura di alici in Cetara. Spaghetti alla Nerano in Nerano. Fresh-caught fish on Procida. Don't miss the thermal springs on Ischia's Maronti beach.</div>
+    </div>
+    <div class="tip-card">
+      <span class="tip-icon">🏊</span>
+      <div class="tip-title">Marine Reserve</div>
+      <div class="tip-text">Punta Campanella Marine Reserve (near Nerano) requires anchoring in designated areas. The visibility is exceptional — bring snorkelling gear.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Sailuxe · Lagoon 60 · 5 Cabins · Amalfi Coast · 20–27 June · Salerno
+</footer>
+
+<script>
+  // Generate stars
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.left = Math.random() * 100 + '%';
+    s.style.top = Math.random() * 70 + '%';
+    s.style.setProperty('--d', (2 + Math.random() * 4) + 's');
+    s.style.animationDelay = (Math.random() * 4) + 's';
+    s.style.width = s.style.height = (Math.random() > 0.8 ? 3 : 2) + 'px';
+    starsEl.appendChild(s);
+  }
+
+  function toggleDay(header) {
+    const card = header.parentElement;
+    card.classList.toggle('open');
+  }
+
+  // ── MAP ──
+  const mapScript = document.createElement('script');
+  mapScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+  mapScript.onload = function() {
+    const map = L.map('charter-map', {
+      center: [40.63, 14.20],
+      zoom: 9,
+      zoomControl: true,
+      scrollWheelZoom: false
+    });
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '© OpenStreetMap © CARTO',
+      subdomains: 'abcd',
+      maxZoom: 19
+    }).addTo(map);
+
+    function makeIcon(color, size) {
+      return L.divIcon({
+        className: '',
+        html: `<div style="
+          width:${size}px;height:${size}px;
+          background:${color};
+          border:2px solid rgba(255,255,255,0.75);
+          border-radius:50%;
+          box-shadow:0 0 8px ${color};
+        "></div>`,
+        iconAnchor: [size/2, size/2],
+        popupAnchor: [0, -(size/2+4)]
+      });
+    }
+
+    function makeWalkIcon(color, size) {
+      return L.divIcon({
+        className: '',
+        html: `<div style="
+          width:${size}px;height:${size}px;
+          background:${color};
+          border:2px solid rgba(255,255,255,0.75);
+          border-radius:3px;
+          box-shadow:0 0 8px ${color};
+          transform:rotate(45deg);
+        "></div>`,
+        iconAnchor: [size/2, size/2],
+        popupAnchor: [0, -(size/2+4)]
+      });
+    }
+
+    // Main charter stops — gold for home port, aqua for all others
+    const stops = [
+      { lat: 40.6418, lng: 14.8202, name: 'Salerno', note: 'Sat 20 Jun — Board 18:00<br>Sat 27 Jun — Disembark 10:00', home: true },
+      { lat: 40.6470, lng: 14.7034, name: 'Cetara', note: 'Sun 21 Jun & Fri 26 Jun<br>Swim & snorkel stop' },
+      { lat: 40.6320, lng: 14.5977, name: 'Amalfi', note: 'Sun 21 Jun — Overnight, marina' },
+      { lat: 40.6383, lng: 14.5305, name: 'Fiordo di Furore', note: 'Mon 22 Jun — Swim & snorkel stop' },
+      { lat: 40.6272, lng: 14.4862, name: 'Positano', note: 'Mon 22 Jun & Thu 25 Jun<br>On anchor · Dinner ashore Thu 🍽️' },
+      { lat: 40.5833, lng: 14.3564, name: 'Marina del Cantone, Nerano', note: 'Mon 22 Jun — Overnight, anchor<br>Dinner ashore 🍽️' },
+      { lat: 40.5561, lng: 14.2056, name: 'Blue Grotto, Capri', note: 'Tue 23 Jun — Morning visit' },
+      { lat: 40.5534, lng: 14.2382, name: 'Capri', note: 'Tue 23 Jun — Overnight, anchor' },
+      { lat: 40.7652, lng: 14.0321, name: 'Procida', note: 'Wed 24 Jun — Overnight, marina<br>Dinner ashore 🍽️' },
+      { lat: 40.7379, lng: 13.9485, name: 'Ischia', note: 'Thu 25 Jun — Swim stop<br>Baia di San Montano 🤿' },
+      { lat: 40.5750, lng: 14.4050, name: 'Li Galli', note: 'Thu 25 Jun — Swim & snorkel stop 🤿' },
+    ];
+
+    stops.forEach(s => {
+      const icon = makeIcon(s.home ? '#c9a84c' : '#5dade2', s.home ? 13 : 10);
+      L.marker([s.lat, s.lng], { icon })
+        .addTo(map)
+        .bindPopup(`<b>${s.name}</b><span>${s.note}</span>`);
+    });
+
+    // Path of the Gods — diamond markers in a soft green
+    const walkPoints = [
+      { lat: 40.6408, lng: 14.5572, name: 'Bomerano / Agerola', note: '⚑ Path of the Gods — Start<br>Mon 22 Jun (optional)<br>Taxi from Positano ≈30 min' },
+      { lat: 40.6275, lng: 14.4960, name: 'Nocelle', note: '⚑ Path of the Gods — Finish<br>Descend 1,800 steps to Positano' },
+    ];
+
+    walkPoints.forEach(w => {
+      const icon = makeWalkIcon('#7dcea0', 10);
+      L.marker([w.lat, w.lng], { icon })
+        .addTo(map)
+        .bindPopup(`<b>${w.name}</b><span>${w.note}</span>`);
+    });
+
+    // Walk trail line
+    L.polyline(
+      walkPoints.map(w => [w.lat, w.lng]),
+      { color: '#7dcea0', weight: 2, opacity: 0.7, dashArray: '4 6' }
+    ).addTo(map);
+
+    // Legend
+    const legend = L.control({ position: 'bottomright' });
+    legend.onAdd = function() {
+      const div = L.DomUtil.create('div');
+      div.style.cssText = 'background:#0d1f2d;border:1px solid rgba(93,173,226,0.3);border-radius:4px;padding:10px 14px;font-family:Josefin Sans,sans-serif;font-size:11px;color:#aed6f1;line-height:2;';
+      div.innerHTML = `
+        <div><span style="display:inline-block;width:10px;height:10px;background:#c9a84c;border-radius:50%;border:1px solid rgba(255,255,255,0.6);margin-right:7px;vertical-align:middle;"></span>Home port</div>
+        <div><span style="display:inline-block;width:10px;height:10px;background:#5dade2;border-radius:50%;border:1px solid rgba(255,255,255,0.6);margin-right:7px;vertical-align:middle;"></span>Charter stops</div>
+        <div><span style="display:inline-block;width:10px;height:10px;background:#7dcea0;border-radius:3px;transform:rotate(45deg);border:1px solid rgba(255,255,255,0.6);margin-right:7px;vertical-align:middle;"></span>Path of the Gods</div>
+      `;
+      return div;
+    };
+    legend.addTo(map);
+  };
+  document.head.appendChild(mapScript);
+
+
+</script>
+</body>
+</html>

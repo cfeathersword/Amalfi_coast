@@ -8,16 +8,16 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
 <style>
   :root {
-    --navy: #f0f7ff;
-    --deep: #e4f1fb;
-    --sea: #b8d9f0;
-    --azure: #1a7ab5;
-    --aqua: #0e6fa8;
-    --foam: #0d4f7a;
-    --sand: #7a4f1a;
-    --gold: #b8650a;
-    --light: #daeef9;
-    --white: #1a3a52;
+    --navy: #0d1b2a;
+    --deep: #0a1520;
+    --sea: #1a3a5c;
+    --azure: #4a9fd4;
+    --aqua: #5bb8e8;
+    --foam: #a8d4f0;
+    --sand: #c8a46a;
+    --gold: #d4a84b;
+    --light: #1e3a58;
+    --white: #e8f4fd;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -47,9 +47,9 @@
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(ellipse at 20% 15%, rgba(255,255,255,0.7) 0%, transparent 45%),
-      radial-gradient(ellipse at 80% 10%, rgba(255,225,120,0.35) 0%, transparent 40%),
-      linear-gradient(180deg, #a8daef 0%, #4aaed8 35%, #1a7ab5 65%, #1d6fa8 100%);
+      radial-gradient(ellipse at 20% 15%, rgba(74,159,212,0.15) 0%, transparent 45%),
+      radial-gradient(ellipse at 80% 10%, rgba(212,168,75,0.2) 0%, transparent 40%),
+      linear-gradient(180deg, #0a1e35 0%, #0d2d4a 35%, #071828 65%, #050f1a 100%);
     z-index: 0;
   }
 
@@ -68,20 +68,20 @@
     left: -100%;
     width: 300%;
     height: 100%;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 100'%3E%3Cpath fill='%23e4f1fb' d='M0,60 C360,100 1080,0 1440,60 L1440,100 L0,100 Z'/%3E%3C/svg%3E") repeat-x;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 100'%3E%3Cpath fill='%230a1520' d='M0,60 C360,100 1080,0 1440,60 L1440,100 L0,100 Z'/%3E%3C/svg%3E") repeat-x;
     background-size: 50% 100%;
     animation: waveAnim 12s linear infinite;
     opacity: 0.6;
   }
   .wave:nth-child(2) {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 100'%3E%3Cpath fill='%23b8d9f0' d='M0,40 C400,90 1000,10 1440,50 L1440,100 L0,100 Z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 100'%3E%3Cpath fill='%230d1b2a' d='M0,40 C400,90 1000,10 1440,50 L1440,100 L0,100 Z'/%3E%3C/svg%3E");
     animation-duration: 18s;
     animation-direction: reverse;
     opacity: 0.4;
     height: 120px;
   }
   .wave:nth-child(3) {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 100'%3E%3Cpath fill='%23e4f1fb' d='M0,70 C300,20 1100,90 1440,40 L1440,100 L0,100 Z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 100'%3E%3Cpath fill='%230a1520' d='M0,70 C300,20 1100,90 1440,40 L1440,100 L0,100 Z'/%3E%3C/svg%3E");
     animation-duration: 22s;
     opacity: 0.8;
     height: 80px;
@@ -240,7 +240,7 @@
     font-size: 0.75rem;
     letter-spacing: 0.4em;
     text-transform: uppercase;
-    color: #1a7ab5;
+    color: #4a9fd4;
     display: block;
     margin-bottom: 1rem;
   }
@@ -249,7 +249,7 @@
     font-family: 'Cormorant Garamond', serif;
     font-weight: 300;
     font-size: clamp(2rem, 4vw, 3.5rem);
-    color: #0d4f7a;
+    color: #e8f4fd;
   }
 
   /* ── ROUTE VISUAL ── */
@@ -285,26 +285,26 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: #1a7ab5;
-    border: 2px solid #4aaed8;
+    background: #4a9fd4;
+    border: 2px solid #5bb8e8;
     transition: transform 0.2s, background 0.2s;
   }
 
-  .route-dot.home .dot { background: #d4850f; border-color: #f5c842; }
+  .route-dot.home .dot { background: #d4a84b; border-color: #e8c86a; }
   .route-dot:hover .dot { transform: scale(1.5); }
 
   .route-dot .name {
     font-size: 0.55rem;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: #0d4f7a;
+    color: #a8d4f0;
     white-space: nowrap;
   }
 
   .route-line {
     width: 30px;
     height: 1px;
-    background: linear-gradient(to right, #1a7ab5, #4aaed8);
+    background: linear-gradient(to right, #1a3a5c, #4a9fd4);
     position: relative;
     top: -8px;
     flex-shrink: 0;
@@ -317,7 +317,7 @@
     left: 50%;
     transform: translateX(-50%);
     font-size: 0.55rem;
-    color: #1a7ab5;
+    color: #4a9fd4;
     opacity: 0.7;
   }
 
@@ -330,32 +330,32 @@
 
   .day-card {
     margin-bottom: 1.5rem;
-    border: 1px solid rgba(26,122,181,0.2);
+    border: 1px solid rgba(74,159,212,0.25);
     border-radius: 4px;
     overflow: hidden;
     transition: border-color 0.3s;
   }
 
-  .day-card:hover { border-color: rgba(26,122,181,0.5); }
+  .day-card:hover { border-color: rgba(74,159,212,0.6); }
 
   .day-header {
     display: flex;
     align-items: center;
     gap: 1.5rem;
     padding: 1.4rem 2rem;
-    background: rgba(255,255,255,0.7);
+    background: rgba(13,27,42,0.9);
     cursor: pointer;
     user-select: none;
     transition: background 0.2s;
   }
 
-  .day-header:hover { background: rgba(184,217,240,0.6); }
+  .day-header:hover { background: rgba(26,58,92,0.9); }
 
   .day-number {
     font-family: 'Cormorant Garamond', serif;
     font-size: 2.5rem;
     font-weight: 300;
-    color: #1a7ab5;
+    color: #4a9fd4;
     line-height: 1;
     min-width: 2.5rem;
     text-align: center;
@@ -376,11 +376,11 @@
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.55rem;
     font-weight: 400;
-    color: #1a4a6b;
+    color: #e8f4fd;
   }
 
   .day-chevron {
-    color: #1a7ab5;
+    color: #4a9fd4;
     font-size: 1rem;
     transition: transform 0.3s;
     flex-shrink: 0;
@@ -398,14 +398,14 @@
 
   .day-inner {
     padding: 0 2rem 2rem;
-    background: rgba(255,255,255,0.4);
+    background: rgba(10,21,32,0.95);
   }
 
   .stop {
     display: flex;
     gap: 1.5rem;
     padding: 1.5rem 0;
-    border-bottom: 1px solid rgba(26,122,181,0.12);
+    border-bottom: 1px solid rgba(74,159,212,0.15);
   }
 
   .stop:last-child { border-bottom: none; }
@@ -418,13 +418,13 @@
   .stop-time {
     font-size: 0.78rem;
     letter-spacing: 0.1em;
-    color: #1a7ab5;
+    color: #5bb8e8;
     white-space: nowrap;
   }
 
   .stop-duration {
     font-size: 0.72rem;
-    color: rgba(13,79,122,0.55);
+    color: rgba(168,212,240,0.5);
     margin-top: 0.2rem;
   }
 
@@ -439,8 +439,8 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #1a7ab5;
-    border: 1px solid #4aaed8;
+    background: #4a9fd4;
+    border: 1px solid #5bb8e8;
     flex-shrink: 0;
     margin-top: 2px;
   }
@@ -448,7 +448,7 @@
   .stop-vline {
     width: 1px;
     flex: 1;
-    background: rgba(26,122,181,0.25);
+    background: rgba(74,159,212,0.3);
     margin-top: 4px;
   }
 
@@ -458,20 +458,20 @@
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.3rem;
     font-weight: 400;
-    color: #0d4f7a;
+    color: #c8e8f8;
     margin-bottom: 0.5rem;
   }
 
   .stop-note {
     font-size: 0.88rem;
     line-height: 1.7;
-    color: rgba(26,80,120,0.8);
+    color: rgba(168,212,240,0.75);
     font-weight: 300;
   }
 
   /* ── TIPS SECTION ── */
   .tips-section {
-    background: linear-gradient(180deg, #e4f1fb 0%, #d0e9f7 100%);
+    background: linear-gradient(180deg, #0a1520 0%, #07111c 100%);
     padding: 4rem 2rem 6rem;
   }
 
@@ -484,16 +484,16 @@
   }
 
   .tip-card {
-    background: rgba(26,74,107,0.15);
-    border: 1px solid rgba(26,122,181,0.2);
+    background: rgba(26,58,92,0.4);
+    border: 1px solid rgba(74,159,212,0.2);
     border-radius: 4px;
     padding: 1.5rem;
     transition: border-color 0.3s, background 0.3s;
   }
 
   .tip-card:hover {
-    border-color: rgba(26,122,181,0.45);
-    background: rgba(255,255,255,0.85);
+    border-color: rgba(74,159,212,0.55);
+    background: rgba(26,58,92,0.7);
   }
 
   .tip-icon {
@@ -513,7 +513,7 @@
   .tip-text {
     font-size: 0.88rem;
     line-height: 1.7;
-    color: rgba(26,70,110,0.8);
+    color: rgba(168,212,240,0.8);
     font-weight: 300;
   }
 
@@ -524,18 +524,19 @@
     font-size: 0.6rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: rgba(26,80,120,0.45);
-    border-top: 1px solid rgba(26,122,181,0.12);
+    color: rgba(168,212,240,0.35);
+    border-top: 1px solid rgba(74,159,212,0.15);
+    background: #050f1a;
   }
 
   .stop-note em {
-    color: #1a7ab5;
+    color: #5bb8e8;
     font-style: normal;
     font-size: 0.85rem;
   }
 
   .stop-note strong {
-    color: #b8650a;
+    color: #d4a84b;
     font-weight: 400;
   }
 
@@ -549,7 +550,7 @@
     margin: 0 auto;
     height: 500px;
     border-radius: 4px;
-    border: 1px solid rgba(26,122,181,0.25);
+    border: 1px solid rgba(74,159,212,0.3);
     overflow: hidden;
   }
 
@@ -584,6 +585,151 @@
   .leaflet-container {
     background: #d4eaf7 !important;
     font-family: 'Josefin Sans', sans-serif !important;
+  }
+
+  /* ── LIFE ON BOARD ── */
+  .life-section {
+    background: linear-gradient(180deg, #0d1b2a 0%, #0a1520 100%);
+    padding: 4rem 2rem 5rem;
+  }
+
+  .life-grid {
+    max-width: 860px;
+    margin: 2rem auto 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .life-card {
+    background: rgba(26,58,92,0.35);
+    border: 1px solid rgba(74,159,212,0.2);
+    border-radius: 4px;
+    padding: 2rem;
+  }
+
+  .life-question {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: #c8e8f8;
+    margin-bottom: 1rem;
+    letter-spacing: 0.02em;
+  }
+
+  .life-answer {
+    font-size: 0.88rem;
+    line-height: 1.8;
+    color: rgba(168,212,240,0.8);
+    font-weight: 300;
+  }
+
+  /* ── GETTING THERE ── */
+  .getting-there-section {
+    background: linear-gradient(180deg, #07111c 0%, #0a1520 100%);
+    padding: 4rem 2rem 5rem;
+  }
+
+  .getting-there-grid {
+    max-width: 860px;
+    margin: 2rem auto 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .transport-card {
+    background: rgba(26,58,92,0.35);
+    border: 1px solid rgba(74,159,212,0.2);
+    border-radius: 4px;
+    padding: 1.5rem;
+  }
+
+  .transport-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+
+  .transport-title {
+    font-size: 0.72rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.6rem;
+  }
+
+  .transport-body {
+    font-size: 0.86rem;
+    line-height: 1.75;
+    color: rgba(168,212,240,0.78);
+    font-weight: 300;
+  }
+
+  .transport-body a {
+    color: #5bb8e8;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(91,184,232,0.35);
+  }
+
+  .transport-body a:hover { border-bottom-color: #5bb8e8; }
+
+  .transport-body strong {
+    color: #c8e8f8;
+    font-weight: 400;
+  }
+
+  /* ── DISTANCE TABLE ── */
+  .distance-section {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 2rem 4rem;
+  }
+
+  .distance-table-wrap {
+    overflow-x: auto;
+  }
+
+  .distance-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 0.85rem;
+  }
+
+  .distance-table thead tr {
+    border-bottom: 1px solid rgba(74,159,212,0.4);
+  }
+
+  .distance-table th {
+    font-size: 0.62rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #4a9fd4;
+    font-weight: 300;
+    padding: 0.75rem 1rem 0.75rem 0;
+    text-align: left;
+  }
+
+  .distance-table td {
+    padding: 0.85rem 1rem 0.85rem 0;
+    border-bottom: 1px solid rgba(74,159,212,0.1);
+    color: rgba(168,212,240,0.85);
+    font-weight: 300;
+  }
+
+  .distance-table td:first-child {
+    color: #c8e8f8;
+  }
+
+  .distance-table td:nth-child(2),
+  .distance-table td:nth-child(3) {
+    color: #5bb8e8;
+    white-space: nowrap;
+  }
+
+  .distance-table tbody tr:hover td {
+    background: rgba(74,159,212,0.06);
   }
 
 
@@ -794,6 +940,30 @@
 
   <div class="map-section">
     <div id="charter-map"></div>
+  </div>
+
+  <!-- DISTANCE GUIDE -->
+  <div class="distance-section">
+    <div class="section-header" style="padding-top:3rem; padding-bottom:1.5rem;">
+      <span class="eyebrow">Passage Planning</span>
+      <h2>Cruising Distances &amp; Times</h2>
+    </div>
+    <div class="distance-table-wrap">
+      <table class="distance-table">
+        <thead>
+          <tr><th>Leg</th><th>NM</th><th>Est. Time</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Marina d'Arechi → Amalfi</td><td>10 NM</td><td>1h 40min</td></tr>
+          <tr><td>Amalfi → Capri</td><td>18 NM</td><td>3h 00min</td></tr>
+          <tr><td>Capri → Ischia</td><td>17 NM</td><td>2h 50min</td></tr>
+          <tr><td>Ischia → Procida</td><td>4 NM</td><td>0h 40min</td></tr>
+          <tr><td>Procida → Sorrento</td><td>18 NM</td><td>3h 00min</td></tr>
+          <tr><td>Sorrento → Positano</td><td>15 NM</td><td>2h 30min</td></tr>
+          <tr><td>Positano → Marina d'Arechi</td><td>16 NM</td><td>2h 40min</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
 
@@ -1137,6 +1307,24 @@
   </div><!-- /days-container -->
 </main>
 
+<!-- LIFE ON BOARD -->
+<section class="life-section">
+  <div class="section-header" style="padding-top:0;">
+    <span class="eyebrow">Aboard the Lagoon 60</span>
+    <h2>Life on Board</h2>
+  </div>
+  <div class="life-grid">
+    <div class="life-card">
+      <div class="life-question">What happens if the weather is bad?</div>
+      <div class="life-answer">Although the weather tends to be very nice in the summer seasons, you never know. Our team knows the sailing areas perfectly and will be able to recommend the best ports, bays and places to make your stay safe and enjoyable — even when the sun isn't shining.</div>
+    </div>
+    <div class="life-card">
+      <div class="life-question">What should I bring with me?</div>
+      <div class="life-answer">Everything you need for a summer vacation — swimwear and flip-flops, cover-ups, sarongs and bermuda shorts. Don't forget sunscreen and ecological soaps (the fish will thank you). Pack in a soft bag that folds away easily for storage below. Rigid suitcases aren't welcome on board, but we can store them empty at our luggage facility if needed.</div>
+    </div>
+  </div>
+</section>
+
 <!-- TIPS -->
 <section class="tips-section">
   <div class="section-header" style="padding-top:0;">
@@ -1173,6 +1361,36 @@
       <span class="tip-icon">🏊</span>
       <div class="tip-title">Marine Reserve</div>
       <div class="tip-text">Punta Campanella Marine Reserve (near Nerano) requires anchoring in designated areas. The visibility is exceptional — bring snorkelling gear.</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW TO GET THERE -->
+<section class="getting-there-section">
+  <div class="section-header" style="padding-top:0;">
+    <span class="eyebrow">Getting to Salerno</span>
+    <h2>How to Get There</h2>
+  </div>
+  <div class="getting-there-grid">
+    <div class="transport-card">
+      <div class="transport-icon">🚌</div>
+      <div class="transport-title">By Bus</div>
+      <div class="transport-body">From Naples airport (<a href="https://www.aeroportodinapoli.it" target="_blank">aeroportodinapoli.it</a>) and from the city of Naples, reach Salerno via SITA bus (<a href="https://www.sitasudtrasporti.it" target="_blank">sitasudtrasporti.it</a>), then continue to Marina di Arechi by private transfer or taxi.</div>
+    </div>
+    <div class="transport-card">
+      <div class="transport-icon">🚆</div>
+      <div class="transport-title">By Train</div>
+      <div class="transport-body">Reach Salerno from all major Italian cities with Trenitalia (<a href="https://www.trenitalia.it" target="_blank">trenitalia.it</a>) or Italo (<a href="https://www.italotreno.it" target="_blank">italotreno.it</a>), then continue to Marina di Arechi by private transfer or taxi.</div>
+    </div>
+    <div class="transport-card">
+      <div class="transport-icon">🚗</div>
+      <div class="transport-title">By Car</div>
+      <div class="transport-body"><strong>Heading north:</strong> A1 Napoli–Salerno — after the Salerno centre exit take the ring road and exit at «Mariconda» A30 Caserta–Salerno. Proceed to «Salerno–Fratte», then head south and exit at «Mariconda».<br><br><strong>Heading south:</strong> A3 Salerno–Reggio Calabria — take the «Pontecagnano» exit and follow signs for «Fratte–Tangenziale», then exit at «Zona Industriale» or «Mariconda».</div>
+    </div>
+    <div class="transport-card">
+      <div class="transport-icon">⚓</div>
+      <div class="transport-title">Parking at Marina di Arechi</div>
+      <div class="transport-body">Guest Parking is available directly at the marina. Leave your car at the port and step straight aboard.</div>
     </div>
   </div>
 </section>
